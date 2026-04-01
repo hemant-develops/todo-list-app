@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+  <link rel="manifest" href="images/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/input.js" defer></script>
+</head>
+
+<body class="<%= typeof pageClass !== 'undefined' ? pageClass : 'app-shell' %>">
+  <div class="page-bg">
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <div class="grid-glow"></div>
+  </div>
+  <% const menuLinks = typeof mobileMenuLinks !== 'undefined' ? mobileMenuLinks : []; %>
+  <div class="mobile-topbar">
+    <div class="mobile-topbar__brand">
+      <span class="mobile-topbar__eyebrow">Control room</span>
+      <strong><%= typeof mobileMenuTitle !== 'undefined' ? mobileMenuTitle : 'To-Do List' %></strong>
+    </div>
+    <% if (menuLinks.length) { %>
+    <div class="mobile-menu" data-mobile-menu>
+      <button class="mobile-menu__trigger" type="button" aria-label="Open mobile menu" aria-expanded="false"
+        data-mobile-menu-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="mobile-menu__panel is-hidden" data-mobile-menu-panel>
+        <% menuLinks.forEach((link) => { %>
+        <a class="mobile-menu__link" href="<%= link.href %>"><%= link.label %></a>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+  </div>
+  <div class="theme-toggle-wrap">
+    <button class="theme-toggle" type="button" aria-label="Toggle light and dark mode" data-theme-toggle>
+      <span class="theme-toggle__thumb" aria-hidden="true"></span>
+      <span class="theme-toggle__option theme-toggle__option--sun">
+        <svg class="lucide-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2" />
+          <path d="M12 20v2" />
+          <path d="m4.93 4.93 1.41 1.41" />
+          <path d="m17.66 17.66 1.41 1.41" />
+          <path d="M2 12h2" />
+          <path d="M20 12h2" />
+          <path d="m6.34 17.66-1.41 1.41" />
+          <path d="m19.07 4.93-1.41 1.41" />
+        </svg>
+        <span>Sun</span>
+      </span>
+      <span class="theme-toggle__option theme-toggle__option--moon">
+        <svg class="lucide-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
+        </svg>
+        <span>Moon</span>
+      </span>
+    </button>
+  </div>

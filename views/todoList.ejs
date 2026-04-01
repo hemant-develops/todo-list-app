@@ -1,0 +1,205 @@
+<%- include('header', {
+  mobileMenuTitle: listName,
+  mobileMenuLinks: [
+    { label: 'About app', href: '/about' },
+    { label: 'Logout', href: '/logout' }
+  ]
+}); -%>
+
+<main class="dashboard">
+  <section class="hero-panel">
+    <div class="hero-copy">
+      <p class="eyebrow">Task cockpit</p>
+      <h1><%= listTitle %></h1>
+      <p class="hero-text">Your lists, your pace, your vibe. Switch the mood with light and dark mode, then get things moving.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <span class="stat-label">Items left</span>
+        <strong><%= listItems.length %></strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Focus score</span>
+        <strong><%= dashboardState.focusScore %></strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Active lists</span>
+        <strong><%= lists.length %></strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-grid">
+    <aside class="panel panel--sidebar">
+      <div class="panel-head">
+        <div>
+          <p class="panel-kicker">Spaces</p>
+          <h2>Your lists</h2>
+        </div>
+      </div>
+
+      <div class="list-rail">
+        <% lists.forEach((list)=>{ %>
+        <form action="/<%= encodeURIComponent(list) %>" method="get" class="rail-form"
+          id="<%=list==listName?'special-btn-form':'' %>">
+          <div class="rail-item <%= list==listName? 'special-btn rail-item--active':'' %>">
+            <button type="submit"
+              class="list-chip <%= ((list==listTitle.split(' List')[0])||list=='To-do'&&!listTitle.includes('List'))?'selected':'' %> listName"><%= list %></button>
+            <% if(list==listName &&(list!="To-do")){ %>
+            <button id="deleteListButton" data-list="<%= listName %>" class="icon-button is-hidden" type="button"
+              aria-label="Delete current list">
+              <img class="icon" src="images/delete.png" alt="Delete list" />
+            </button>
+            <% } %>
+          </div>
+        </form>
+        <% }) %>
+        <form class="lists new-list-form">
+          <button class="list-chip list-chip--add addList" type="button" name="addList">
+            + New list
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <section class="panel panel--tasks">
+      <div class="panel-head">
+        <div>
+          <p class="panel-kicker">Today flow</p>
+          <h2>Checklist</h2>
+        </div>
+        <span class="panel-badge"><%= dashboardState.quickTip %></span>
+      </div>
+
+      <div class="task-list" data-task-list>
+        <% if (!listItems.length) { %>
+        <article class="empty-state">
+          <p class="empty-state__eyebrow">Silence mode</p>
+          <h3>Nothing is chasing you right now.</h3>
+          <p>Add a fresh mission below, hit Spotlight later, and let the deck come alive again.</p>
+        </article>
+        <% } %>
+
+        <% listItems.forEach((item)=>{ %>
+        <form action="/delete" method="post" class="task-form" data-task-item data-task-text="<%= item.name %>">
+          <label class="item">
+            <input type="checkbox" name="checkbox" value="<%=item._id%>" />
+            <span class="checkmark"></span>
+            <p><%= item.name %></p>
+          </label>
+          <input type="hidden" name="listName" value="<%= listName %>" />
+        </form>
+        <% }) %>
+      </div>
+
+      <form class="composer" action="/<%= encodeURIComponent(listName) %>" method="post">
+        <input type="text" name="newItem" placeholder="Drop your next mission here" autocomplete="off" />
+        <button type="submit" name="button" value="<%= listTitle %>">Add</button>
+      </form>
+    </section>
+
+    <aside class="panel panel--command">
+      <div class="panel-head">
+        <div>
+          <p class="panel-kicker">Command deck</p>
+          <h2>Crazy mode</h2>
+        </div>
+      </div>
+
+      <div class="control-stack">
+        <article class="control-card control-card--spotlight">
+          <p class="control-label">Spotlight mission</p>
+          <h3 data-focus-preview><%= dashboardState.spotlightSeed %></h3>
+          <p class="control-copy">Let the board choose what deserves your attention next and throw it center-stage.</p>
+          <button class="control-button" type="button" data-command="spotlight">
+            <svg class="lucide-icon lucide-icon--button" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v18" />
+              <path d="M3 12h18" />
+              <path d="m5.64 5.64 12.72 12.72" />
+              <path d="m18.36 5.64-12.72 12.72" />
+            </svg>
+            <span>Pick next mission</span>
+          </button>
+        </article>
+
+        <article class="control-card control-card--ideas">
+          <p class="control-label">Idea radar</p>
+          <h3>Search by keyword and get task ideas.</h3>
+          <p class="control-copy">Type anything like exam, gym, youtube, startup, travel, coding, or money and the app will turn it into ready-to-use to-do ideas.</p>
+          <form class="idea-form" data-idea-form>
+            <input type="text" placeholder="Search a keyword for ideas" data-idea-input />
+            <button class="control-button" type="submit">
+              <svg class="lucide-icon lucide-icon--button" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              <span>Find ideas</span>
+            </button>
+          </form>
+          <div class="idea-presets">
+            <button class="idea-chip" type="button" data-idea-preset="study">Study</button>
+            <button class="idea-chip" type="button" data-idea-preset="fitness">Fitness</button>
+            <button class="idea-chip" type="button" data-idea-preset="coding">Coding</button>
+            <button class="idea-chip" type="button" data-idea-preset="startup">Startup</button>
+          </div>
+          <p class="idea-status" data-idea-status>Type a keyword and tap a result to load it into your task box.</p>
+          <div class="idea-results" data-idea-results></div>
+        </article>
+
+        <article class="control-card">
+          <p class="control-label">Privacy + export</p>
+          <h3>One tap stealth mode.</h3>
+          <p class="control-copy">Blur the board instantly when somebody walks by, or export a clean snapshot to the clipboard.</p>
+          <div class="control-actions">
+            <button class="control-button control-button--ghost" type="button" data-command="privacy">
+              <svg class="lucide-icon lucide-icon--button" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <span data-privacy-label>Privacy veil</span>
+            </button>
+            <button class="control-button control-button--ghost" type="button" data-command="snapshot">
+              <svg class="lucide-icon lucide-icon--button" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+              <span>Copy snapshot</span>
+            </button>
+          </div>
+        </article>
+
+        <article class="control-card control-card--intel">
+          <p class="control-label">Quick keys</p>
+          <div class="shortcut-grid">
+            <span><strong>F</strong> Spotlight</span>
+            <span><strong>P</strong> Privacy</span>
+            <span><strong>S</strong> Snapshot</span>
+            <span><strong>I</strong> Ideas</span>
+          </div>
+          <p class="security-note">Safer sessions, rate limits, scoped deletes, and cleaned inputs are now running behind the scenes.</p>
+        </article>
+
+        <div class="action-links">
+          <a class="ghost-link" href="/about">
+            <svg class="lucide-icon lucide-icon--button" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3" />
+              <path d="M12 17h.01" />
+            </svg>
+            <span>About app</span>
+          </a>
+          <a class="ghost-link" href="/logout">
+            <svg class="lucide-icon lucide-icon--button" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m16 17 5-5-5-5" />
+              <path d="M21 12H9" />
+              <path d="M13 5V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1" />
+            </svg>
+            <span>Logout</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<%- include('footer'); -%>
